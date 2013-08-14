@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.drill.game.entities.Block;
 import com.drill.game.entities.Player;
+import com.badlogic.gdx.utils.Array;
 
 public class World {
 
@@ -32,8 +33,8 @@ public class World {
 	Rectangle downDrillRectangle;
 
 	public final Player player;
-	public final List<Block> blocks;
-	public final List<Block> chainBlocks;
+	public final Array<Block> blocks;
+	public final Array<Block> chainBlocks;
 	public final WorldListener listener;
 	public final Random rand;
 	public boolean updatePlayer;
@@ -42,8 +43,8 @@ public class World {
 	public World(WorldListener listener) {
 		this.player = new Player(this, 4.5f, WORLD_HEIGHT - 3.5f);
 		this.listener = listener;
-		this.blocks = new ArrayList<Block>();
-		this.chainBlocks = new ArrayList<Block>();
+		this.blocks = new Array<Block>();
+		this.chainBlocks = new Array<Block>();
 		rand = new Random();
 		generateLevel();
 		downDrillRectangle = new Rectangle(0, 0, 288, 448);
@@ -115,7 +116,7 @@ public class World {
 
 	private void updateBlocks(float deltaTime) {
 		// TODO Auto-generated method stub
-		for (int i = 0; i < blocks.size(); i++) {
+		for (int i = 0; i < blocks.size; i++) {
 			Block block = blocks.get(i);
 			block.update(deltaTime);
 		}
@@ -212,12 +213,12 @@ public class World {
 
 	private void checkPlayerCollision() {
 		// TODO Auto-generated method stub
-		int len = blocks.size();
+		int len = blocks.size;
 		for (int i = 0; i < len; i++) {
 			Block block = blocks.get(i);
 			if (player.position.y > block.position.y
 					&& player.position.x == block.position.x) {
-				if (OverlapTester.overlapRectangles(player.bounds, block.bounds)) {
+				if (player.bounds.overlaps(block.bounds)) {
 					player.state = Player.PLAYER_STANDING;
 					player.position.set(block.position.x, block.position.y + 1);
 					player.velocity.x = 0;
@@ -229,8 +230,7 @@ public class World {
 			if (player.state == Player.PLAYER_MOVING_LEFT) {
 				if (player.position.x < block.position.x
 						&& player.position.y == block.position.y) {
-					if (OverlapTester.overlapRectangles(player.bounds,
-							block.bounds)) {
+					if (player.bounds.overlaps(block.bounds)) {
 						player.state = Player.PLAYER_STANDING;
 						player.position.set(block.position.x + 1,
 								block.position.y);
@@ -242,8 +242,7 @@ public class World {
 			if (player.state == Player.PLAYER_MOVING_RIGHT) {
 				if (player.position.x > block.position.x
 						&& player.position.y == block.position.y) {
-					if (OverlapTester.overlapRectangles(player.bounds,
-							block.bounds)) {
+					if (player.bounds.overlaps(block.bounds)) {
 						player.state = Player.PLAYER_STANDING;
 						player.position.set(block.position.x - 1,
 								block.position.y);
