@@ -69,14 +69,22 @@ public class Player extends DynamicGameObject {
 	public void digLeft(Block block) {
 		if (block.position.x + 1 == position.x
 				&& block.position.y == position.y) {
-			world.blocks.remove(block);
+			world.blocks.removeValue(block, false);
 		}
+	}
+
+	public int getLooking() {
+		return looking;
+	}
+
+	public void setLooking(int looking) {
+		this.looking = looking;
 	}
 
 	public void digRight(Block block) {
 		if (block.position.x - 1 == position.x
 				&& block.position.y == position.y) {
-			world.blocks.remove(block);
+			world.blocks.removeValue(block,false);
 		}
 	}
 
@@ -100,10 +108,10 @@ public class Player extends DynamicGameObject {
 	}
 
 	public void cadena(Block block) {
-		if (!world.chainBlocks.contains(block)) {
+		if (!world.chainBlocks.contains(block,true)) {
 			world.chainBlocks.add(block);
 		}
-		for (int i = 0; i < world.blocks.size(); i++) {
+		for (int i = 0; i < world.blocks.size; i++) {
 			Block blockAtSide = world.blocks.get(i);
 			for (int x = -1; x <= 1; x++) {
 				for (int y = -1; y <= 1; y++) {
@@ -112,12 +120,12 @@ public class Player extends DynamicGameObject {
 							// block down
 							if (block.position.x == blockAtSide.position.x && block.position.y - 1 == blockAtSide.position.y) {
 								if (blockAtSide.type == block.type) {
-									if (!world.chainBlocks.contains(blockAtSide)) {
+									if (!world.chainBlocks.contains(blockAtSide,false)) {
 										world.chainBlocks.add(blockAtSide);
 										cadena(blockAtSide);
 									} else {
-										for (int j = 0; j < world.chainBlocks.size(); j++) {
-											world.chainBlocks.remove(j);
+										for (int j = 0; j < world.chainBlocks.size; j++) {
+											world.chainBlocks.removeIndex(j);
 										}    // LOS BLOQUES NO SE BORRAN PORQUE TAMBIEN ESTAN EN EL ARRAY WORLD.BLOCKS
 									}
 								}

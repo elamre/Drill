@@ -1,17 +1,21 @@
 package com.drill;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.drill.Main.Assets;
 import com.drill.game.World;
 import com.drill.game.WorldRenderer;
 import com.drill.game.entities.Block;
 import com.drill.game.entities.Player;
+import com.drill.main.MyGame;
 
 import java.util.List;
 
 
-public class GameScreen extends GLScreen {
+public class GameScreen implements Screen {
 
 	static final int GAME_READY = 0;
 	static final int GAME_RUNNING = 1;
@@ -20,11 +24,11 @@ public class GameScreen extends GLScreen {
 	static final int GAME_LEVEL_END = 4;
 
 	int state;
-	Camera2D guiCam;
+	OrthographicCamera guiCam;
 	Vector2 touchPoint;
-	SpriteBatcher batcher;
+	SpriteBatch spriteBatch;
 	World world;
-	WorldListener worldListener;
+	World.WorldListener worldListener;
 	WorldRenderer renderer;
 	Rectangle pauseBounds;
 	Rectangle resumeBounds;
@@ -37,13 +41,14 @@ public class GameScreen extends GLScreen {
 	Rectangle digArrowRectangle;
 	float sec;
 
-	public GameScreen(Game game) {
-		super(game);
+	public GameScreen(MyGame game) {
 		state = GAME_READY;
-		guiCam = new Camera2D(glGraphics, 288, 448);
+		guiCam = new OrthographicCamera();
+		guiCam.setToOrtho(true, 288, 488);
+		spriteBatch = new SpriteBatch();
 		touchPoint = new Vector2();
-		batcher = new SpriteBatcher(glGraphics, 1000);
-		worldListener = new WorldListener() {
+		spriteBatch = new SpriteBatch();
+		worldListener = new World.WorldListener() {
 			public void jump() {
 
 			}
@@ -61,7 +66,7 @@ public class GameScreen extends GLScreen {
 			}
 		};
 		world = new World(worldListener);
-		renderer = new WorldRenderer(glGraphics, batcher, world);
+		renderer = new WorldRenderer(spriteBatch, world);
 		pauseBounds = new Rectangle(0, 448 - 64, 64, 64);
 		resumeBounds = new Rectangle(144 - 64, 224, 64, 64);
 		quitBounds = new Rectangle(144 - 96, 224 - 64, 64, 64);
@@ -74,25 +79,24 @@ public class GameScreen extends GLScreen {
 		sec = 0;
 	}
 
-	@Override
 	public void update(float deltaTime) {
 		// TODO Auto-generated method stub
 		if (deltaTime > 0.1f) {
 			deltaTime = 0.1f;
 		}
 		switch (state) {
-		case GAME_READY:
-			updateReady();
-			break;
-		case GAME_RUNNING:
-			updateRunning(deltaTime);
-			break;
-		case GAME_PAUSED:
-			updatePaused();
-			break;
-		case GAME_OVER:
-			updateGameOver();
-			break;
+			case GAME_READY:
+				updateReady();
+				break;
+			case GAME_RUNNING:
+				updateRunning(deltaTime);
+				break;
+			case GAME_PAUSED:
+				updatePaused();
+				break;
+			case GAME_OVER:
+				updateGameOver();
+				break;
 		}
 
 	}
@@ -108,127 +112,69 @@ public class GameScreen extends GLScreen {
 	}
 
 	private void updateRunning(float deltaTime) {
-		// TODO Auto-generated method stub
-		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
-		int len = touchEvents.size();
-		for (int i = 0; i < len; i++) {
-			TouchEvent event = touchEvents.get(i);
-
-			touchPoint.set(event.x, event.y);
-			guiCam.touchToWorld(touchPoint);
-
-			if (event.type == TouchEvent.TOUCH_UP) {
-
-				// Directional events
-				if (OverlapTester.pointInRectangle(downArrowRectangle,
-						touchPoint)) {
-					world.player.looking = Player.LOOKING_DOWN;
-				}
-				if (OverlapTester.pointInRectangle(leftArrowRectangle,
-						touchPoint)) {
-					world.player.looking = Player.LOOKING_LEFT;
-					for (int j = 0; j < world.blocks.size(); j++) {
-						Block block = world.blocks.get(j);
-						if (world.player.isBlockLeft(block)) {
-							break;
-						} else {
-							if (j == world.blocks.size() - 1) {
-								world.player.state = Player.PLAYER_MOVING_LEFT;
-							}
+		if (Gdx.input.isTouched()) {
+			if (downArrowRectangle.contains(Gdx.input.getX(), Gdx.input.getY())) {
+				world.player.setLooking(Player.LOOKING_DOWN);
+			}
+			if (leftArrowRectangle.contains(Gdx.input.getX(), Gdx.input.getY())) {
+				world.player.setLooking(Player.LOOKING_LEFT);
+				for (int j = 0; j < world.blocks.size; j++) {
+					Block block = world.blocks.get(j);
+					if (world.player.isBlockLeft(block)) {
+						break;
+					} else {
+						if (j == world.blocks.size - 1) {
+							world.player.state = Player.PLAYER_MOVING_LEFT;
 						}
 					}
 				}
-				if (OverlapTester.pointInRectangle(rightArrowRectangle,
-						touchPoint)) {
-					world.player.looking = Player.LOOKING_RIGHT;
-					for (int j = 0; j < world.blocks.size(); j++) {
-						Block block = world.blocks.get(j);
-						if (world.player.isBlockRight(block)) {
-							break;
-						} else {
-							if (j == world.blocks.size() - 1) {
-								world.player.state = Player.PLAYER_MOVING_RIGHT;
-							}
+			}
+			if (rightArrowRectangle.contains(Gdx.input.getX(), Gdx.input.getY())) {
+				world.player.setLooking(Player.LOOKING_RIGHT);
+				for (int j = 0; j < world.blocks.size; j++) {
+					Block block = world.blocks.get(j);
+					if (world.player.isBlockRight(block)) {
+						break;
+					} else {
+						if (j == world.blocks.size - 1) {
+							world.player.state = Player.PLAYER_MOVING_RIGHT;
 						}
 					}
 				}
+			}
 
-				// Dig events
-				if (OverlapTester.pointInRectangle(digArrowRectangle,
-						touchPoint)) {
-					switch (world.player.looking) {
+			if (digArrowRectangle.contains(Gdx.input.getX(), Gdx.input.getY())) {
+				switch (world.player.getLooking()) {
 					case 0:
-						for (int j = 0; j < world.blocks.size(); j++) {
+						for (int j = 0; j < world.blocks.size; j++) {
 							Block block = world.blocks.get(j);
 							world.player.digDown(block);
 						}
 						break;
 					case 1:
-						for (int j = 0; j < world.blocks.size(); j++) {
+						for (int j = 0; j < world.blocks.size; j++) {
 							Block block = world.blocks.get(j);
 							world.player.digLeft(block);
 						}
 						break;
 					case 2:
-						for (int j = 0; j < world.blocks.size(); j++) {
+						for (int j = 0; j < world.blocks.size; j++) {
 							Block block = world.blocks.get(j);
 							world.player.digRight(block);
 						}
 						break;
-					}
 				}
 			}
-
 		}
 		world.update(deltaTime);
-		
+
 	}
 
 	private void updateReady() {
 		// TODO Auto-generated method stub
-		if (game.getInput().getTouchEvents().size() > 0) {
+		if(Gdx.input.isTouched()){
 			state = GAME_RUNNING;
 		}
-	}
-
-	@Override
-	public void present(float deltaTime) {
-		// TODO Auto-generated method stub
-		GL10 gl = glGraphics.getGL();
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		gl.glEnable(GL10.GL_TEXTURE_2D);
-
-		renderer.render();
-
-		guiCam.setViewportAndMatrices();
-		gl.glEnable(GL10.GL_BLEND);
-		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-//		batcher.beginBatch(Assets.items);
-		switch (state) {
-		case GAME_READY:
-			presentReady();
-			break;
-		case GAME_RUNNING:
-			presentRunning(deltaTime);
-			break;
-		case GAME_PAUSED:
-			presentPaused();
-			break;
-		case GAME_LEVEL_END:
-			presentLevelEnd();
-			break;
-		case GAME_OVER:
-			presentGameOver();
-			break;
-		}
-		batcher.endBatch();
-		gl.glDisable(GL10.GL_BLEND);
-
-	}
-
-	private void presentReady() {
-		// TODO Auto-generated method stub
-
 	}
 
 	private void presentRunning(float deltaTime) {
@@ -238,8 +184,8 @@ public class GameScreen extends GLScreen {
 		int milisecsInt = milisecs.charAt(2) + milisecs.charAt(3);
 		int remainingTime = Integer.parseInt(timeString);
 		String timeRemainingString = String.valueOf(remainingTime - milisecsInt);
-		Assets.font.drawText(batcher, timeRemainingString, 15, 448 - 10);
-		if(remainingTime < 00000) {
+		//Assets.font.drawText(batcher, timeRemainingString, 15, 448 - 10);
+		if (remainingTime < 00000) {
 			state = GAME_OVER;
 		}
 	}
@@ -257,6 +203,57 @@ public class GameScreen extends GLScreen {
 	private void presentGameOver() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void render(float delta) {
+		renderer.render();
+		// TODO Auto-generated method stub
+/*		GL10 gl = glGraphics.getGL();
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+
+		renderer.render();
+
+		guiCam.setViewportAndMatrices();
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+//		batcher.beginBatch(Assets.items);
+		switch (state) {
+			case GAME_READY:
+				presentReady();
+				break;
+			case GAME_RUNNING:
+				presentRunning(deltaTime);
+				break;
+			case GAME_PAUSED:
+				presentPaused();
+				break;
+			case GAME_LEVEL_END:
+				presentLevelEnd();
+				break;
+			case GAME_OVER:
+				presentGameOver();
+				break;
+		}
+		spriteBatch.end();
+		gl.glDisable(GL10.GL_BLEND);*/
+		update(delta);
+	}
+
+	@Override
+	public void resize(int i, int i2) {
+		//To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	@Override
+	public void show() {
+		//To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	@Override
+	public void hide() {
+		//To change body of implemented methods use File | Settings | File Templates.
 	}
 
 	@Override

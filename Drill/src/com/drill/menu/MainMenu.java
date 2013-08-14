@@ -1,8 +1,14 @@
 package com.drill.menu;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.drill.Main.MyGame;
+import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.drill.main.Assets;
+import com.drill.main.MyGame;
 
 /**
  * User: elmar
@@ -12,16 +18,42 @@ import com.drill.Main.MyGame;
  * Project: Drill
  */
 public class MainMenu implements Screen {
-	/** reference to the main class */
-	MyGame game;
+	private OrthographicCamera camera;
+	SpriteBatch spriteBatch;
+	Rectangle playRectangle;
+	private MyGame game;
 
 	public MainMenu(MyGame game) {
-  	    this.game = game;
+		this.game = game;
+		camera = new OrthographicCamera();
+		camera.setToOrtho(true, 288, 488);
+		spriteBatch = new SpriteBatch();
+		playRectangle = new Rectangle(288 / 2, 448 / 2, 150, 100);
+
+	}
+
+	public void update(float deltaTime) {
+		camera.update();
+		if (Gdx.input.isTouched()) {
+			if (playRectangle.contains(Gdx.input.getX(), Gdx.input.getY())) {
+				game.setScreen(null);
+				return;
+			}
+		}
 	}
 
 	@Override
 	public void render(float deltaT) {
-		//To change body of implemented methods use File | Settings | File Templates.
+		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		spriteBatch.setProjectionMatrix(camera.combined);
+		//gl.glEnable(GL10.GL_TEXTURE_2D);
+
+		spriteBatch.begin();
+		spriteBatch.draw(Assets.backgroundRegion, 0, 0);
+		spriteBatch.draw(Assets.startButtonRegion, 100, 100);
+		spriteBatch.end();
+		update(deltaT);
 	}
 
 	@Override
@@ -41,16 +73,19 @@ public class MainMenu implements Screen {
 
 	@Override
 	public void pause() {
-		//To change body of implemented methods use File | Settings | File Templates.
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void resume() {
-		//To change body of implemented methods use File | Settings | File Templates.
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void dispose() {
-		//To change body of implemented methods use File | Settings | File Templates.
+		// TODO Auto-generated method stub
+
 	}
 }

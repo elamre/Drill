@@ -16,7 +16,7 @@ public class Block extends DynamicGameObject {
 	public static final int BLOCK_STILL = 0;
 	public static final int BLOCK_STATE_PULVERIZING = 2;
 
-	int type;
+	public int type;
 	int state;
 	float stateTime;
 

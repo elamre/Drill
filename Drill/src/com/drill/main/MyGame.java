@@ -10,19 +10,24 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.drill.GameScreen;
 import com.drill.MainMenuScreen;
 
 public class MyGame extends Game {
 	public static MainMenuScreen mainMenuScreen;
+	public static GameScreen gameScreen;
 
 	private OrthographicCamera camera;
-	private SpriteBatch batch;
+	public SpriteBatch batch;
 	private Texture texture;
 	private Sprite sprite;
 
 	@Override
 	public void create() {
+		Assets.load();
+
 		mainMenuScreen = new MainMenuScreen(this);
+		gameScreen = new GameScreen(this);
 
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
@@ -39,6 +44,8 @@ public class MyGame extends Game {
 		sprite.setSize(0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
 		sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
 		sprite.setPosition(-sprite.getWidth() / 2, -sprite.getHeight() / 2);
+
+		setScreen(mainMenuScreen);
 	}
 
 	@Override
@@ -52,7 +59,7 @@ public class MyGame extends Game {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		batch.setProjectionMatrix(camera.combined);
+		//batch.setProjectionMatrix(camera.combined);
 
 		draw();
 		update(Gdx.graphics.getDeltaTime());

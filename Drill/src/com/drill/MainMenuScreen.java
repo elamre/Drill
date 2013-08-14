@@ -1,73 +1,69 @@
 package com.drill;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.drill.main.Assets;
 import com.drill.main.MyGame;
 
 import java.util.List;
 
 public class MainMenuScreen implements Screen {
-
-	Camera2D camera;
-	SpriteBatcher batcher;
+	private OrthographicCamera camera;
+	SpriteBatch spriteBatch;
 	Rectangle playRectangle;
-	Vector2 touchPoint;
 	private MyGame game;
 
 	public MainMenuScreen(MyGame game) {
 		this.game = game;
-		camera = new Camera2D(glGraphics, 288, 448);
-		batcher = new SpriteBatcher(glGraphics, 2);
+		camera = new OrthographicCamera();
+		camera.setToOrtho(true, 288, 488);
+		spriteBatch = new SpriteBatch();
 		playRectangle = new Rectangle(288 / 2, 448 / 2, 150, 100);
-		touchPoint = new Vector2();
 
 	}
 
-	@Override
 	public void update(float deltaTime) {
-		// TODO Auto-generated method stub
-		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
-		game.getInput().getKeyEvents();
-
-		int len = touchEvents.size();
-		for (int i = 0; i < len; i++) {
-			TouchEvent event = touchEvents.get(i);
-			if (event.type == TouchEvent.TOUCH_UP) {
-				touchPoint.set(event.x, event.y);
-				camera.touchToWorld(touchPoint);
-				if(playRectangle.contains(touchPoint.x,touchPoint.y)){
-
-					return;
-				}
-
-				if (OverlapTester.pointInRectangle(playRectangle, touchPoint)) {
-					game.setScreen(new GameScreen(game));
-					return;
-				}
-
+		camera.update();
+		if (Gdx.input.isTouched()) {
+			if (playRectangle.contains(Gdx.input.getX(), Gdx.input.getY())) {
+				game.setScreen(MyGame.gameScreen);
+				return;
 			}
 		}
-
 	}
 
 	@Override
-	public void present(float deltaTime) {
-		// TODO Auto-generated method stub
-		GL10 gl = glGraphics.getGL();
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		camera.setViewportAndMatrices();
+	public void render(float deltaT) {
+		System.out.println("UPDATE");
+		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		spriteBatch.setProjectionMatrix(camera.combined);
+		//gl.glEnable(GL10.GL_TEXTURE_2D);
 
-		gl.glEnable(GL10.GL_TEXTURE_2D);
+		spriteBatch.begin();
+		spriteBatch.draw(Assets.backgroundRegion, 0, 0);
+		spriteBatch.draw(Assets.startButtonRegion, 100, 100);
+		spriteBatch.end();
+		update(deltaT);
+	}
 
-		batcher.beginBatch(Assets.background);
-		batcher.drawSprite(288 / 2, 448 / 2, 288, 448, Assets.backgroundRegion);
-		batcher.endBatch();
+	@Override
+	public void resize(int i, int i2) {
+		//To change body of implemented methods use File | Settings | File Templates.
+	}
 
-		batcher.beginBatch(Assets.startButton);
-		batcher.drawSprite(288/2, 448/2, 150, 100, Assets.startButtonRegion);
-		batcher.endBatch();
+	@Override
+	public void show() {
+		//To change body of implemented methods use File | Settings | File Templates.
+	}
 
+	@Override
+	public void hide() {
+		//To change body of implemented methods use File | Settings | File Templates.
 	}
 
 	@Override
