@@ -1,32 +1,28 @@
 package com.drill.game;
 
 import java.util.Random;
-
-import javax.microedition.khronos.opengles.GL10;
-
-import com.badlogic.androidgames.framework.gl.Camera2D;
-import com.badlogic.androidgames.framework.gl.SpriteBatcher;
-import com.badlogic.androidgames.framework.impl.GLGraphics;
 import com.drill.game.entities.Block;
 import com.drill.Main.Assets;
+import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class WorldRenderer {
 
 	static final float FRUSTRUM_WIDTH = 9;
 	static final float FRUSTRUM_HEIGHT = 14;
 
-	GLGraphics glGraphics;
-	SpriteBatcher batcher;
+    OrthographicCamera cam;
+	SpriteBatch batcher;
 	World world;
-	Camera2D cam;
 	Random rand;
 
-	public WorldRenderer(GLGraphics glGraphics, SpriteBatcher batcher,
+	public WorldRenderer(SpriteBatch batcher,
 			World world) {
-		this.glGraphics = glGraphics;
 		this.batcher = batcher;
 		this.world = world;
-		this.cam = new Camera2D(glGraphics, FRUSTRUM_WIDTH, FRUSTRUM_HEIGHT);
+		this.cam = new OrthographicCamera();
+        cam.setToOrtho(false, FRUSTRUM_WIDTH, FRUSTRUM_HEIGHT);
 		this.cam.position.y = this.world.player.position.y;
 		rand = new Random();
 	}
@@ -36,7 +32,7 @@ public class WorldRenderer {
 		if (world.player.position.y < cam.position.y) {
 			cam.position.y = world.player.position.y;
 		}
-		cam.setViewportAndMatrices();
+		batcher.setProjectionMatrix(cam.combined);
 		renderBackground();
 		renderObjects();
 	}
