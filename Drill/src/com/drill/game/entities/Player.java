@@ -15,7 +15,7 @@ public class Player extends DynamicGameObject {
 	public static final int LOOKING_LEFT = 1;
 	public static final int LOOKING_RIGHT = 2;
 
-	int state;
+	public int state;
 	int looking;
 	World world;
 
@@ -35,20 +35,26 @@ public class Player extends DynamicGameObject {
 				velocity.add(World.gravity.x * deltaTime, World.gravity.y
 						* deltaTime);
 				position.add(velocity.x * deltaTime, velocity.y * deltaTime);
-				bounds.lowerLeft.set(position).sub(bounds.getWidth() / 2, bounds.getHeight() / 2);
+				bounds.setX(position.x - bounds.getWidth() / 2);
+				bounds.setY(position.y - bounds.getHeight() / 2);
+				//bounds.lowerLeft.set(position).sub(bounds.getWidth() / 2, bounds.getHeight() / 2);
 			}
 		}
 		if (state == PLAYER_MOVING_LEFT) {
 			velocity.y = 0;
 			velocity.add(-5 * deltaTime, 0);
 			position.add(velocity.x * deltaTime, velocity.y * deltaTime);
-			bounds.lowerLeft.set(position).sub(bounds.getWidth() / 2, bounds.getHeight() / 2);
+			bounds.setX(position.x - bounds.getWidth() / 2);
+			bounds.setY(position.y - bounds.getHeight() / 2);
+			//bounds.lowerLeft.set(position).sub(bounds.getWidth() / 2, bounds.getHeight() / 2);
 		}
 		if (state == PLAYER_MOVING_RIGHT) {
 			velocity.y = 0;
 			velocity.add(5 * deltaTime, 0);
 			position.add(velocity.x * deltaTime, velocity.y * deltaTime);
-			bounds.lowerLeft.set(position).sub(bounds.getWidth() / 2, bounds.getHeight() / 2);
+			bounds.setX(position.x - bounds.getWidth() / 2);
+			bounds.setY(position.y - bounds.getHeight() / 2);
+			//bounds.lowerLeft.set(position).sub(bounds.getWidth() / 2, bounds.getHeight() / 2);
 		}
 	}
 

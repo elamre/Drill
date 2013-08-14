@@ -65,8 +65,7 @@ public class WorldRenderer {
 
 	public void renderButtons() {
 		// TODO Auto-generated method stub
-		batcher.drawSprite(3, world.player.position.y - 6, 2, 2,
-				Assets.arrowButton);
+		batcher.drawSprite(3, world.player.position.y - 6, 2, 2, Assets.arrowButton);
 		batcher.drawSprite(1, world.player.position.y - 6, 2, 2, 180 + 90,
 				Assets.arrowButton);
 		batcher.drawSprite(5, world.player.position.y - 6, 2, 2, 90,

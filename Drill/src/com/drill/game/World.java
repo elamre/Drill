@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.drill.game.entities.Block;
 import com.drill.game.entities.Player;
-import org.lwjgl.util.Rectangle;
 
 public class World {
 
@@ -217,8 +217,7 @@ public class World {
 			Block block = blocks.get(i);
 			if (player.position.y > block.position.y
 					&& player.position.x == block.position.x) {
-				if (OverlapTester
-						.overlapRectangles(player.bounds, block.bounds)) {
+				if (OverlapTester.overlapRectangles(player.bounds, block.bounds)) {
 					player.state = Player.PLAYER_STANDING;
 					player.position.set(block.position.x, block.position.y + 1);
 					player.velocity.x = 0;
