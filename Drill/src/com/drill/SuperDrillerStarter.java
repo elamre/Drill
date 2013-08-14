@@ -5,6 +5,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.impl.GLGame;
+import com.drill.Main.Assets;
+import com.drill.main.Settings;
 
 public class SuperDrillerStarter extends GLGame {
 	boolean firstTimeCreate = true;

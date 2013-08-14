@@ -1,14 +1,17 @@
-package com.drill;
+package com.drill.game;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.badlogic.androidgames.framework.math.OverlapTester;
-import com.badlogic.androidgames.framework.math.Rectangle;
-import com.badlogic.androidgames.framework.math.Vector2;
+import com.badlogic.gdx.math.Vector2;
+import com.drill.game.entities.Block;
+import com.drill.game.entities.Player;
+import org.lwjgl.util.Rectangle;
 
 public class World {
+
+
 
 	public interface WorldListener {
 		public void jump();

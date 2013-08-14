@@ -1,6 +1,7 @@
-package com.drill;
+package com.drill.game.entities;
 
-import com.badlogic.androidgames.framework.DynamicGameObject;
+
+import com.drill.game.World;
 
 public class Block extends DynamicGameObject {
 
@@ -34,8 +35,7 @@ public class Block extends DynamicGameObject {
 						* deltaTime);
 				if (position.y >= -43.5f) {
 					position.add(velocity.x * deltaTime, velocity.y * deltaTime);
-					bounds.lowerLeft.set(position).sub(bounds.width / 2,
-							bounds.height / 2);
+					bounds.lowerLeft.set(position).sub(bounds.getWidth() / 2, bounds.getHeight() / 2);
 				}
 			}
 			if (state == BLOCK_STILL) {

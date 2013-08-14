@@ -1,4 +1,4 @@
-package com.drill;
+package com.drill.game;
 
 import java.util.Random;
 
@@ -7,6 +7,8 @@ import javax.microedition.khronos.opengles.GL10;
 import com.badlogic.androidgames.framework.gl.Camera2D;
 import com.badlogic.androidgames.framework.gl.SpriteBatcher;
 import com.badlogic.androidgames.framework.impl.GLGraphics;
+import com.drill.game.entities.Block;
+import com.drill.Main.Assets;
 
 public class WorldRenderer {
 

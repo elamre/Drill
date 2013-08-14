@@ -1,16 +1,22 @@
 package com.drill;
 
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.drill.main.MyGame;
+
 import java.util.List;
 
-public class MainMenuScreen extends GLScreen {
+public class MainMenuScreen implements Screen {
 
 	Camera2D camera;
 	SpriteBatcher batcher;
 	Rectangle playRectangle;
 	Vector2 touchPoint;
+	private MyGame game;
 
-	public MainMenuScreen(Game game) {
-		super(game);
+	public MainMenuScreen(MyGame game) {
+		this.game = game;
 		camera = new Camera2D(glGraphics, 288, 448);
 		batcher = new SpriteBatcher(glGraphics, 2);
 		playRectangle = new Rectangle(288 / 2, 448 / 2, 150, 100);
@@ -30,6 +36,10 @@ public class MainMenuScreen extends GLScreen {
 			if (event.type == TouchEvent.TOUCH_UP) {
 				touchPoint.set(event.x, event.y);
 				camera.touchToWorld(touchPoint);
+				if(playRectangle.contains(touchPoint.x,touchPoint.y)){
+
+					return;
+				}
 
 				if (OverlapTester.pointInRectangle(playRectangle, touchPoint)) {
 					game.setScreen(new GameScreen(game));

@@ -2,6 +2,11 @@ package com.drill;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.drill.Main.Assets;
+import com.drill.game.World;
+import com.drill.game.WorldRenderer;
+import com.drill.game.entities.Block;
+import com.drill.game.entities.Player;
 
 import java.util.List;
 
