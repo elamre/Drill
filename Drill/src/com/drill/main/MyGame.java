@@ -10,80 +10,60 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.drill.GameScreen;
-import com.drill.MainMenuScreen;
+import com.drill.game.Assets;
+import com.drill.game.entity.Block;
+import com.drill.game.entity.EntityManager;
 
 public class MyGame extends Game {
-	public static MainMenuScreen mainMenuScreen;
-	public static GameScreen gameScreen;
 
-	private OrthographicCamera camera;
-	public SpriteBatch batch;
-	private Texture texture;
-	private Sprite sprite;
+    public SpriteBatch batch;
+    private OrthographicCamera camera;
+    private EntityManager entityManager;
 
-	@Override
-	public void create() {
-		Assets.load();
+    @Override
+    public void create() {
+        Assets.getAssets();
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.setToOrtho(true);
+        batch = new SpriteBatch();
+        batch.setProjectionMatrix(camera.combined);
+        entityManager = new EntityManager(this);
+    }
 
-		mainMenuScreen = new MainMenuScreen(this);
-		gameScreen = new GameScreen(this);
+    @Override
+    public void dispose() {
+        batch.dispose();
+    }
 
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
+    @Override
+    public void render() {
+        Gdx.gl.glDisable(GL10.GL_CULL_FACE);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        draw();
+        update(Gdx.graphics.getDeltaTime());
+    }
 
-		camera = new OrthographicCamera(1, h / w);
-		batch = new SpriteBatch();
+    public void draw() {
+        batch.begin();
+        entityManager.draw(batch);
+        batch.end();
+    }
 
-		texture = new Texture(Gdx.files.internal("data/libgdx.png"));
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+    public void update(float deltaT) {
+        camera.update();
+        entityManager.update(deltaT);
+    }
 
-		TextureRegion region = new TextureRegion(texture, 0, 0, 512, 275);
+    @Override
+    public void resize(int width, int height) {
+    }
 
-		sprite = new Sprite(region);
-		sprite.setSize(0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
-		sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
-		sprite.setPosition(-sprite.getWidth() / 2, -sprite.getHeight() / 2);
+    @Override
+    public void pause() {
+    }
 
-		setScreen(mainMenuScreen);
-	}
-
-	@Override
-	public void dispose() {
-		batch.dispose();
-		texture.dispose();
-	}
-
-	@Override
-	public void render() {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-		//batch.setProjectionMatrix(camera.combined);
-
-		draw();
-		update(Gdx.graphics.getDeltaTime());
-	}
-
-	public void draw() {
-		batch.begin();
-		sprite.draw(batch);
-		batch.end();
-	}
-
-	public void update(float deltaT) {
-
-	}
-
-	@Override
-	public void resize(int width, int height) {
-	}
-
-	@Override
-	public void pause() {
-	}
-
-	@Override
-	public void resume() {
-	}
+    @Override
+    public void resume() {
+    }
 }
