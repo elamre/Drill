@@ -42,10 +42,11 @@ public class Player extends Entity {
     public void update(float deltaT) {
         if (entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y) + 1) == null) {
             if (Globals.getGridCord(y) > targetGridY) {
-                entityManager.shiftMap();
+               // entityManager.shiftMap();
             } else {
-                y += Globals.BLOCK_SIZE;
+
             }
+            y += Globals.BLOCK_SIZE;
         }
     }
 
