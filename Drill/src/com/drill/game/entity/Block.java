@@ -30,11 +30,11 @@ public class Block extends Entity {
     @Override
     public void update(float deltaT) {
         if (entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y) + 1) == null && Globals.getGridCord(y) <= Globals.MAX_HEIGHT - 2) {
-            try {
-                Thread.sleep(1000);
+            /*try {
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+            }*/
             oldY = y;
             y += Globals.BLOCK_SIZE;
             entityManager.moveBlock(this, Globals.getGridCord(x), Globals.getGridCord(oldY), Globals.getGridCord(x), Globals.getGridCord(y));
@@ -42,13 +42,10 @@ public class Block extends Entity {
         } else {
             if (state == State.FALLING) {
                 state = State.IDLE;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-                if(entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y)+1).getType() == type){
-                    entityManager.removeEntity(this);
+                if (entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y) + 1) != null) {
+                    if (entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y) + 1).getType() == type) {
+                        entityManager.removeEntity(this);
+                    }
                 }
             }
         }
