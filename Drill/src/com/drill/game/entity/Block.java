@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.drill.game.Assets;
 import com.drill.game.Globals;
 
+import java.util.ArrayList;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Elmar
@@ -12,64 +14,103 @@ import com.drill.game.Globals;
  * To change this template use File | Settings | File Templates.
  */
 public class Block extends Entity {
-    State state = State.IDLE;
-    private int type = 0;
+    private BlockGroup blockGroup = null;
     private EntityManager entityManager;
+    private int type = 0;
     private int oldY = 0;
 
     public Block(EntityManager entityManager, int type, int x, int y) {
         super(Assets.getAssets().getSprite(type * 32, 0, 32, 32), x, y);
         this.entityManager = entityManager;
         this.type = type;
+        checkBlockGroup();
+        blockGroup.setGroup(this);
+        //TODO calculate blockgroup
+    }
+
+    private void checkBlockGroup() {
+        BlockGroup tempGroup = null;
+        if (entityManager.getBlock(getGridX() + 1, getGridY()) != null) {
+            if (entityManager.getBlock(getGridX() + 1, getGridY()).getType() == type) {
+                tempGroup = entityManager.getBlock(getGridX() + 1, getGridY()).getBlockGroup();
+                if (tempGroup != null) {
+                    blockGroup = tempGroup;
+                    return;
+                }
+            }
+        }
+        if (entityManager.getBlock(getGridX(), getGridY() + 1) != null) {
+            if (entityManager.getBlock(getGridX(), getGridY() + 1).getType() == type) {
+                tempGroup = entityManager.getBlock(getGridX(), getGridY() + 1).getBlockGroup();
+                if (tempGroup != null) {
+                    blockGroup = tempGroup;
+                    return;
+                }
+            }
+        }
+        if (entityManager.getBlock(getGridX(), getGridY() - 1) != null) {
+            if (entityManager.getBlock(getGridX(), getGridY() - 1).getType() == type) {
+                tempGroup = entityManager.getBlock(getGridX(), getGridY() - 1).getBlockGroup();
+                if (tempGroup != null) {
+                    blockGroup = tempGroup;
+                    return;
+                }
+            }
+        }
+        if (entityManager.getBlock(getGridX() - 1, getGridY()) != null) {
+            if (entityManager.getBlock(getGridX() - 1, getGridY()).getType() == type) {
+                tempGroup = entityManager.getBlock(getGridX() - 1, getGridY()).getBlockGroup();
+                if (tempGroup != null) {
+                    blockGroup = tempGroup;
+                    return;
+                }
+            }
+        }
+        if (tempGroup == null)
+            this.blockGroup = BlockGroupManager.newGroup(entityManager, type);
+    }
+
+    @Override
+    public void preUpdate(float deltaT) {
+
+    }
+
+    @Override
+    public void update(float deltaT) {
+        if(blockGroup.canMove())
+            moveDown();
+    }
+
+    @Override
+    public void pastUpdate(float deltaT) {
+
+    }
+
+    public void moveDown() {
+        oldY = y;
+        y += Globals.BLOCK_SIZE;
+        entityManager.moveBlock(this, getGridX(), Globals.getGridCord(oldY), getGridX(), getGridY());
+    }
+
+    public void onDestroy() {
+        System.out.println("Destroying block with type: " + getType());
+        blockGroup.destroyGroup();
+        //Destroy the whole group
+    }
+
+    public boolean isBlockChecked() {
+        return blockGroup != null;
+    }
+
+    public BlockGroup getBlockGroup() {
+        return blockGroup;
     }
 
     public int getType() {
         return type;
     }
 
-    @Override
-    public void update(float deltaT) {
-        if (entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y) + 1) == null && Globals.getGridCord(y) <= Globals.MAX_HEIGHT - 2) {
-            /*try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }*/
-            oldY = y;
-            y += Globals.BLOCK_SIZE;
-            entityManager.moveBlock(this, Globals.getGridCord(x), Globals.getGridCord(oldY), Globals.getGridCord(x), Globals.getGridCord(y));
-            state = State.FALLING;
-        } else {
-            if (state == State.FALLING) {
-                state = State.IDLE;
-                if (entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y) + 1) != null) {
-                    if (entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y) + 1).getType() == type) {
-                        entityManager.removeEntity(this);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        int cordX = Globals.getGridCord(x);
-        int cordY = Globals.getGridCord(y);
-        removeBlock(cordX - 1, cordY);
-        removeBlock(cordX + 1, cordY);
-        removeBlock(cordX, cordY - 1);
-        removeBlock(cordX, cordY + 1);
-    }
-
-    private void removeBlock(int x, int y) {
-        if (entityManager.getBlock(x, y) != null) {
-            if (entityManager.getBlock(x, y).getType() == type) {
-                entityManager.removeBlock(x, y);
-            }
-        }
-    }
-
     enum State {
-        FALLING, CHECK, IDLE;
+        FALLING, CHECK, IDLE
     }
 }

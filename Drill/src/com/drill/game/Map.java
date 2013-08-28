@@ -52,7 +52,7 @@ public class Map {
                 if (getBlock(x, y) == null)
                     string += " - ";
                 else
-                    string += " " + getBlock(x, y).getType() + " ";
+                    string += " " + getBlock(x, y).getBlockGroup().getId() + " ";
             }
             string += "\n";
         }

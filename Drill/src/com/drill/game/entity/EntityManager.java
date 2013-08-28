@@ -75,14 +75,20 @@ public class EntityManager {
     }
 
     public void update(float deltaT) {
+        BlockGroupManager.update();     //Has to be done first for the movement update!!
         if (Gdx.input.isTouched()) {
-            map.shiftMap();
-            // removeBlock(map.getGridCord(Gdx.input.getX()), map.getGridCord(Gdx.input.getY()));
+            // map.shiftMap();
+            removeBlock(map.getGridCord(Gdx.input.getX()), map.getGridCord(Gdx.input.getY()));
         }
         controller.update();
-
+        for (int i = 0, l = entities.size(); i < l; i++) {
+            entities.get(i).preUpdate(deltaT);
+        }
         for (int i = 0, l = entities.size(); i < l; i++) {
             entities.get(i).update(deltaT);
+        }
+        for (int i = 0, l = entities.size(); i < l; i++) {
+            entities.get(i).pastUpdate(deltaT);
             if (!entities.get(i).isAlive())
                 destroyEntities.add(entities.get(i));
         }
@@ -103,6 +109,12 @@ public class EntityManager {
 
     public Block getBlock(int x, int y) {
         return map.getBlock(x, y);
+    }
+
+    public BlockGroup getBlockGroup(int x, int y) {
+        if (map.getBlock(x, y) == null)
+            return null;
+        return map.getBlock(x, y).getBlockGroup();
     }
 
     public void setBlock(Block block, int x, int y) {

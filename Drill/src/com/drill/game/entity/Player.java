@@ -39,6 +39,11 @@ public class Player extends Entity {
     }
 
     @Override
+    public void preUpdate(float deltaT) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public void update(float deltaT) {
         if (entityManager.getBlock(Globals.getGridCord(x), Globals.getGridCord(y) + 1) == null) {
             if (Globals.getGridCord(y) > targetGridY) {
@@ -48,6 +53,11 @@ public class Player extends Entity {
             }
             y += Globals.BLOCK_SIZE;
         }
+    }
+
+    @Override
+    public void pastUpdate(float deltaT) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

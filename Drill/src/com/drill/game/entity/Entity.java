@@ -2,6 +2,7 @@ package com.drill.game.entity;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.drill.game.Globals;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,10 +27,22 @@ public abstract class Entity {
         this.sprite = sprite;
     }
 
+    public abstract void preUpdate(float deltaT);
+
     public abstract void update(float deltaT);
+
+    public abstract void pastUpdate(float deltaT);
 
     public void draw(SpriteBatch spriteBatch) {
         spriteBatch.draw(sprite, x, y);
+    }
+
+    public int getGridX() {
+        return Globals.getGridCord(x);
+    }
+
+    public int getGridY() {
+        return Globals.getGridCord(y);
     }
 
     public void destroy() {
@@ -42,6 +55,7 @@ public abstract class Entity {
     public boolean isAlive() {
         return alive;
     }
+
 
     public void onDestroy() {
     }
